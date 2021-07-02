@@ -6,8 +6,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.DriveCommand;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.commands.*;
+import frc.robot.oi.Logitech;
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /**
@@ -17,17 +18,26 @@ import edu.wpi.first.wpilibj2.command.Command;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
+  // Subsystem
   private final Drivetrain drivetrain = new Drivetrain();
 
-  private final Command m_autoCommand = new DriveCommand(drivetrain, 0.1, 0.1);
+  // Input
+  private final Logitech controller = new Logitech(Constants.Inputs.controllerID);
+
+  // Other 
+  private final DriveWithController driveWithController = new DriveWithController(drivetrain, controller);
+
+  private final Command m_autoCommand = new AutonomousCommand();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    // Default Commands
+    drivetrain.setDefaultCommand(driveWithController);
+
     // Configure the button bindings
     configureButtonBindings();
   }
-
+//Test without 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link

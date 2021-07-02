@@ -5,17 +5,18 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 public class Drivetrain extends SubsystemBase {
-
-  private final WPI_TalonFX driveLeftFollower = new WPI_TalonFX(11);
-  private final WPI_TalonFX driveLeftLeader = new WPI_TalonFX(12);
-  private final WPI_TalonFX driveRightFollower = new WPI_TalonFX(13);
-  private final WPI_TalonFX driveRightLeader = new WPI_TalonFX(14);
+  
+  private final WPI_TalonFX driveLeftFollower = new WPI_TalonFX(Constants.DriveConstants.driveLeftFollowerID);
+  private final WPI_TalonFX driveLeftLeader = new WPI_TalonFX(Constants.DriveConstants.driveLeftLeaderID);
+  private final WPI_TalonFX driveRightFollower = new WPI_TalonFX(Constants.DriveConstants.driverRightFollowerID);
+  private final WPI_TalonFX driveRightLeader = new WPI_TalonFX(Constants.DriveConstants.driveRightLeaderID);
 
   /** Creates a new DriveTrain. */
   public Drivetrain() {
