@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.*;
 import frc.robot.oi.Logitech;
@@ -23,9 +24,12 @@ public class RobotContainer {
 
   // Input
   private final Logitech controller = new Logitech(Constants.Inputs.controllerID);
+  private final Joystick leftJoystick = new Joystick(Constants.Inputs.leftJoystickID);
+  private final Joystick rightJoystick = new Joystick(Constants.Inputs.rightJoystickID);
 
   // Other 
   private final DriveWithController driveWithController = new DriveWithController(drivetrain, controller);
+  private final DriveWithJoysticks driveWithJoysticks = new DriveWithJoysticks(drivetrain, leftJoystick, rightJoystick);
 
   private final Command m_autoCommand = new AutonomousCommand();
 

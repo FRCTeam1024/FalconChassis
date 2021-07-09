@@ -4,24 +4,25 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.oi.Logitech;
 import frc.robot.subsystems.Drivetrain;
 
-public class DriveWithController extends CommandBase {
+public class DriveWithJoysticks extends CommandBase {
   private final Drivetrain drivetrain;
-  private final Logitech controller;
+  private final Joystick leftJoystick, rightJoystick;
+  
+  private final SlewRateLimiter leftFilter = new SlewRateLimiter(10);
+  private final SlewRateLimiter rightFilter = new SlewRateLimiter(10);
 
-  private final SlewRateLimiter leftFilter = new SlewRateLimiter(2);
-  private final SlewRateLimiter rightFilter = new SlewRateLimiter(2);
-
-  /** Creates a new DriveWithController. */
-  public DriveWithController(Drivetrain driveSubsystem, Logitech controllerParam) {
+  /** Creates a new DriveWithJoysticks. */
+  public DriveWithJoysticks(Drivetrain driveSubsystem, Joystick leftJoystickParam, Joystick rightJoystickParam) {
     // Use addRequirements() here to declare subsystem dependencies.
     drivetrain = driveSubsystem;
     addRequirements(driveSubsystem);
-    controller = controllerParam;
+    leftJoystick = leftJoystickParam;
+    rightJoystick = rightJoystickParam;
   }
 
   // Called when the command is initially scheduled.
@@ -31,10 +32,12 @@ public class DriveWithController extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drivetrain.drive(leftFilter.calculate(-controller.getLeftStickY()), rightFilter.calculate(-controller.getRightStickY()));
+    //drivetrain.drive(leftFilter.calculate(leftJoystick.getY()), rightFilter.calculate(rightJoystick.getY()));
+    drivetrain.drive(leftJoystick.getY(), rightJoystick.getY());
   }
 
   // Called once the command ends or is interrupted.
+
   @Override
   public void end(boolean interrupted) {
     drivetrain.drive(0, 0);
