@@ -55,7 +55,7 @@ public class Drivetrain extends SubsystemBase {
 
     driveLeftFollower.setInverted(false);
     driveLeftLeader.setInverted(false);
-    driveRightFollower.setInverted(true);
+    driveRightFollower.setInverted(true); //these were set to true for driving. When testing with the trajectory code, they're having issues when set to true.
     driveRightLeader.setInverted(true);
 
     driveLeftFollower.follow(driveLeftLeader);
@@ -102,7 +102,7 @@ public class Drivetrain extends SubsystemBase {
    */
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     m_leftMotors.setVoltage(leftVolts);
-    m_rightMotors.setVoltage(-rightVolts);
+    m_rightMotors.setVoltage(rightVolts);
     m_drive.feed();
   }
 
@@ -114,11 +114,11 @@ public class Drivetrain extends SubsystemBase {
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     SmartDashboard.putNumber("Raw Left Encoder", driveLeftLeader.getSelectedSensorPosition());
-    SmartDashboard.putNumber("Raw Right Encoder", -1 * driveRightLeader.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Raw Right Encoder", 1 * driveRightLeader.getSelectedSensorPosition());
     SmartDashboard.putNumber("Average Encoder Distance", getAverageEncoderDistance());
     SmartDashboard.putNumber("Gyro Angle", getHeading());
     return new DifferentialDriveWheelSpeeds(10 * driveLeftLeader.getSelectedSensorVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 
-                                            -10 * driveRightLeader.getSelectedSensorVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation);
+                                            10 * driveRightLeader.getSelectedSensorVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation);
   }
 
   /**
