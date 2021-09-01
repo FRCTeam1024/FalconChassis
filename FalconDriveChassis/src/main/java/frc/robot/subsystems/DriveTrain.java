@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -17,26 +18,27 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Drivetrain extends SubsystemBase {
-  
+
   private final WPI_TalonFX driveLeftFollower = new WPI_TalonFX(Constants.DriveConstants.driveLeftFollowerID);
   private final WPI_TalonFX driveLeftLeader = new WPI_TalonFX(Constants.DriveConstants.driveLeftLeaderID);
   private final WPI_TalonFX driveRightFollower = new WPI_TalonFX(Constants.DriveConstants.driverRightFollowerID);
   private final WPI_TalonFX driveRightLeader = new WPI_TalonFX(Constants.DriveConstants.driveRightLeaderID);
 
-  private final SpeedControllerGroup m_rightMotors =
-      new SpeedControllerGroup(driveRightLeader, driveRightFollower);
+  private final SpeedControllerGroup m_rightMotors = new SpeedControllerGroup(driveRightLeader, driveRightFollower);
 
   // The motors on the right side of the drive.
-  private final SpeedControllerGroup m_leftMotors =
-      new SpeedControllerGroup(driveLeftLeader, driveLeftFollower);
+  private final SpeedControllerGroup m_leftMotors = new SpeedControllerGroup(driveLeftLeader, driveLeftFollower);
 
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
 
-  private final AHRS navX;  //Gyro may not be navX, some of this may need to be redone
+  //private final AHRS navX; // Gyro may not be navX, some of this may need to be redone
+
+  private final PigeonIMU pigeon;
 
   private final DifferentialDriveOdometry m_odometry;
 
@@ -55,7 +57,8 @@ public class Drivetrain extends SubsystemBase {
 
     driveLeftFollower.setInverted(false);
     driveLeftLeader.setInverted(false);
-    driveRightFollower.setInverted(true); //these were set to true for driving. When testing with the trajectory code, they're having issues when set to true.
+    driveRightFollower.setInverted(true); // these were set to true for driving. When testing with the trajectory code,
+                                          // they're having issues when set to true.
     driveRightLeader.setInverted(true);
 
     driveLeftFollower.follow(driveLeftLeader);
@@ -64,22 +67,24 @@ public class Drivetrain extends SubsystemBase {
     driveLeftLeader.setSensorPhase(false);
     driveRightLeader.setSensorPhase(false);
 
-    AHRS a = null;
+    pigeon = new PigeonIMU(4);
+
+    /**AHRS a = null;
     try{
       a = new AHRS(SPI.Port.kMXP);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating navX MXP: " + ex.getMessage(), true);
     }
     navX = a;
-    navX.reset();
+    navX.reset();**/
 
-    m_odometry = new DifferentialDriveOdometry(navX.getRotation2d());
+    m_odometry = new DifferentialDriveOdometry(new Rotation2d(3.1415 * pigeon.getAbsoluteCompassHeading()/180)); //testing setting stuff up with the pigeon
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    m_odometry.update(navX.getRotation2d(), 
+    m_odometry.update(new Rotation2d(3.1415 * getHeading()/180), 
         (driveLeftLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation),
         (-1 * driveRightLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation));
     m_drive.feedWatchdog();
@@ -136,20 +141,23 @@ public class Drivetrain extends SubsystemBase {
    * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return navX.getRotation2d().getDegrees();
+    return pigeon.getAbsoluteCompassHeading();
   }
 
   public void zeroHeading() {
-    navX.reset();
+    pigeon.setCompassAngle(0);
+    pigeon.setYaw(0);
+    pigeon.setFusedHeading(0);
   }
 
-  public double getTurnRate() {
-    return -navX.getRate();
-  }
+  //public double getTurnRate() {
+  //  return -pigeon.;
+  //}
 
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
-    m_odometry.resetPosition(pose, navX.getRotation2d());
+    Rotation2d rotation = new Rotation2d(3.1415 * getHeading()/180);
+    m_odometry.resetPosition(pose, rotation);
   }
 
   public void resetEncoders() {
