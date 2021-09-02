@@ -78,13 +78,13 @@ public class Drivetrain extends SubsystemBase {
     navX = a;
     navX.reset();**/
 
-    m_odometry = new DifferentialDriveOdometry(new Rotation2d(3.1415 * pigeon.getAbsoluteCompassHeading()/180)); //testing setting stuff up with the pigeon
+    m_odometry = new DifferentialDriveOdometry(new Rotation2d(Constants.PI * getHeading()/180)); //testing setting stuff up with the pigeon
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    m_odometry.update(new Rotation2d(3.1415 * getHeading()/180), 
+    m_odometry.update(new Rotation2d(Constants.PI * getHeading()/180), 
         (driveLeftLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation),
         (-1 * driveRightLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation));
     m_drive.feedWatchdog();
@@ -112,16 +112,16 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /**
-   * Returns the speed on both sides of the drivetrain, as well as reporting to SmartDahsboard
+   * Returns the speed on both sides of the drivetrain, as well as reporting to SmartDashboard
    * 
    * @return Speed of both sides of the drivetrain
    */
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     SmartDashboard.putNumber("Raw Left Encoder", driveLeftLeader.getSelectedSensorPosition());
-    SmartDashboard.putNumber("Raw Right Encoder", 1 * driveRightLeader.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Raw Right Encoder", driveRightLeader.getSelectedSensorPosition());
     SmartDashboard.putNumber("Average Encoder Distance", getAverageEncoderDistance());
-    SmartDashboard.putNumber("Gyro Angle", getHeading());
+    SmartDashboard.putNumber("Gyro Angle", pigeon.getAbsoluteCompassHeading());
     return new DifferentialDriveWheelSpeeds(10 * driveLeftLeader.getSelectedSensorVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 
                                             10 * driveRightLeader.getSelectedSensorVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation);
   }
@@ -132,7 +132,7 @@ public class Drivetrain extends SubsystemBase {
 
   public double getAverageEncoderDistance() {
     return ((driveLeftLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation) 
-            + -1 * driveRightLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation) / 2.0;
+            + driveRightLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation) / 2.0;
   }
 
   /**
@@ -141,13 +141,13 @@ public class Drivetrain extends SubsystemBase {
    * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return pigeon.getAbsoluteCompassHeading();
+    return (pigeon.getAbsoluteCompassHeading() - 180); //-180 is an attempt to fix wraparound issues
   }
 
   public void zeroHeading() {
-    pigeon.setCompassAngle(0);
-    pigeon.setYaw(0);
-    pigeon.setFusedHeading(0);
+    pigeon.setCompassAngle(180); //compassheading is being set to 180, but reading compass heading gives us 0 on smartdashboard
+    pigeon.setYaw(180);
+    pigeon.setFusedHeading(180);
   }
 
   //public double getTurnRate() {
@@ -156,7 +156,7 @@ public class Drivetrain extends SubsystemBase {
 
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
-    Rotation2d rotation = new Rotation2d(3.1415 * getHeading()/180);
+    Rotation2d rotation = new Rotation2d(Constants.PI * getHeading()/180);
     m_odometry.resetPosition(pose, rotation);
   }
 

@@ -17,6 +17,9 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
  * wherever the constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+    public static final double PI = 3.14159;
+
     // IDs for physical input devices
     // Make sure order matches that of DriverStation
     public static final class Inputs {
