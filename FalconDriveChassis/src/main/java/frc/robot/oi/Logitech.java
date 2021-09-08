@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.XboxController;
  * Add your docs here.
  */
 public class Logitech extends XboxController {
+    private final double deadband = 0.2;
 
     public enum DPadState {
         NEUTRAl, UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT;
@@ -24,12 +25,20 @@ public class Logitech extends XboxController {
 
     public double getLeftStickY() {
         //return super.getRawAxis(XboxController.Axis.kLeftY.value);
-        return getRawAxis(1); // got this off driver station
+        if(Math.abs(getRawAxis(1)) > deadband) {
+            return getRawAxis(1); // got this off driver station
+        } else {
+            return 0;
+        }
     }
 
     public double getRightStickY() {
         // return super.getRawAxis(XboxController.Axis.kRightY.value);
-        return getRawAxis(3); // from driver station
+        if(Math.abs(getRawAxis(3)) > deadband) {
+            return getRawAxis(3); // got this off driver station
+        } else {
+            return 0;
+        }
     }
 
     // gets angle of the DPad on the XBox controller pressed with increments of 45 degree angle. 

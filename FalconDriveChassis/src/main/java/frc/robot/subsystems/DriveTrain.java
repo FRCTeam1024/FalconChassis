@@ -31,7 +31,7 @@ public class Drivetrain extends SubsystemBase {
 
   private final SpeedControllerGroup m_rightMotors = new SpeedControllerGroup(driveRightLeader, driveRightFollower);
 
-  // The motors on the right side of the drive.
+  // The motors on the right side of the drive.e
   private final SpeedControllerGroup m_leftMotors = new SpeedControllerGroup(driveLeftLeader, driveLeftFollower);
 
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
@@ -42,9 +42,16 @@ public class Drivetrain extends SubsystemBase {
 
   private final DifferentialDriveOdometry m_odometry;
 
+  // Array which will contain the yaw, pitch, and roll values of the drivetrain will be stored.
+  // Should be passed as pigeon.getYawPitchRoll(yawPitchRoll);
+  private double[] yawPitchRoll = new double[3];
+
   /** Creates a new DriveTrain. */
   public Drivetrain() {
+    m_drive.setSafetyEnabled(false);
+
     // Reset to default
+
     driveLeftFollower.configFactoryDefault();
     driveLeftLeader.configFactoryDefault();
     driveRightFollower.configFactoryDefault();
@@ -69,15 +76,6 @@ public class Drivetrain extends SubsystemBase {
 
     pigeon = new PigeonIMU(4);
 
-    /**AHRS a = null;
-    try{
-      a = new AHRS(SPI.Port.kMXP);
-    } catch (RuntimeException ex) {
-      DriverStation.reportError("Error instantiating navX MXP: " + ex.getMessage(), true);
-    }
-    navX = a;
-    navX.reset();**/
-
     m_odometry = new DifferentialDriveOdometry(new Rotation2d(Constants.PI * getHeading()/180)); //testing setting stuff up with the pigeon
   }
 
@@ -87,7 +85,8 @@ public class Drivetrain extends SubsystemBase {
     m_odometry.update(new Rotation2d(Constants.PI * getHeading()/180), 
         (driveLeftLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation),
         (-1 * driveRightLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation));
-    m_drive.feedWatchdog();
+    //m_drive.feedWatchdog();
+
   }
 
     /**
@@ -135,19 +134,24 @@ public class Drivetrain extends SubsystemBase {
             + driveRightLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation) / 2.0;
   }
 
+
+  public Rotation2d getRotation2d() {
+    return new Rotation2d(Constants.PI * getHeading()/180);
+  }
   /**
    * Returns the heading of the robot.
    *
    * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return (pigeon.getAbsoluteCompassHeading() - 180); //-180 is an attempt to fix wraparound issues
+    pigeon.getYawPitchRoll(yawPitchRoll);
+    return yawPitchRoll[0]; //-180 is an attempt to fix wraparound issues
   }
 
   public void zeroHeading() {
-    pigeon.setCompassAngle(180); //compassheading is being set to 180, but reading compass heading gives us 0 on smartdashboard
-    pigeon.setYaw(180);
-    pigeon.setFusedHeading(180);
+    //pigeon.setCompassAngle(180); //compassheading is being set to 180, but reading compass heading gives us 0 on smartdashboard
+    pigeon.setYaw(0);
+    //pigeon.setFusedHeading(180);
   }
 
   //public double getTurnRate() {
