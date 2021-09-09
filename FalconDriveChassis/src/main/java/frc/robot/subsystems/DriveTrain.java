@@ -30,13 +30,9 @@ public class Drivetrain extends SubsystemBase {
   private final WPI_TalonFX driveRightLeader = new WPI_TalonFX(Constants.DriveConstants.driveRightLeaderID);
 
   private final SpeedControllerGroup m_rightMotors = new SpeedControllerGroup(driveRightLeader, driveRightFollower);
-
-  // The motors on the right side of the drive.e
   private final SpeedControllerGroup m_leftMotors = new SpeedControllerGroup(driveLeftLeader, driveLeftFollower);
 
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
-
-  //private final AHRS navX; // Gyro may not be navX, some of this may need to be redone
 
   private final PigeonIMU pigeon;
 
@@ -48,10 +44,11 @@ public class Drivetrain extends SubsystemBase {
 
   /** Creates a new DriveTrain. */
   public Drivetrain() {
+
+    // Trying this to avoid errors
     m_drive.setSafetyEnabled(false);
 
     // Reset to default
-
     driveLeftFollower.configFactoryDefault();
     driveLeftLeader.configFactoryDefault();
     driveRightFollower.configFactoryDefault();
@@ -76,16 +73,16 @@ public class Drivetrain extends SubsystemBase {
 
     pigeon = new PigeonIMU(4);
 
-    m_odometry = new DifferentialDriveOdometry(new Rotation2d(Constants.PI * getHeading()/180)); //testing setting stuff up with the pigeon
+    m_odometry = new DifferentialDriveOdometry(getRotation2d()); //testing setting stuff up with the pigeon
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    m_odometry.update(new Rotation2d(Constants.PI * getHeading()/180), 
+    m_odometry.update(getRotation2d(), 
         (driveLeftLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation),
         (-1 * driveRightLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation));
-    //m_drive.feedWatchdog();
+    //m_drive.feedWatchdog(); //Turned safteyobject off so not needed, seems to have stopped some errors
 
   }
 
@@ -120,7 +117,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Raw Left Encoder", driveLeftLeader.getSelectedSensorPosition());
     SmartDashboard.putNumber("Raw Right Encoder", driveRightLeader.getSelectedSensorPosition());
     SmartDashboard.putNumber("Average Encoder Distance", getAverageEncoderDistance());
-    SmartDashboard.putNumber("Gyro Angle", pigeon.getAbsoluteCompassHeading());
+    SmartDashboard.putNumber("Gyro Angle", pigeon.getHeading());
     return new DifferentialDriveWheelSpeeds(10 * driveLeftLeader.getSelectedSensorVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 
                                             10 * driveRightLeader.getSelectedSensorVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation);
   }
@@ -134,10 +131,15 @@ public class Drivetrain extends SubsystemBase {
             + driveRightLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation) / 2.0;
   }
 
-
+  /**
+   * Returns a current Rotation2d object
+   * 
+   * @return the current Rotation2d based on gyro yaw 
+   */
   public Rotation2d getRotation2d() {
     return new Rotation2d(Constants.PI * getHeading()/180);
   }
+
   /**
    * Returns the heading of the robot.
    *
@@ -160,8 +162,7 @@ public class Drivetrain extends SubsystemBase {
 
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
-    Rotation2d rotation = new Rotation2d(Constants.PI * getHeading()/180);
-    m_odometry.resetPosition(pose, rotation);
+    m_odometry.resetPosition(pose, getRotation2d());
   }
 
   public void resetEncoders() {
