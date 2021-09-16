@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
@@ -62,7 +63,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+    SmartDashboard.putData(new DriveDistance(drivetrain, 10.0));
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -94,9 +97,9 @@ public class RobotContainer {
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         List.of(
-            new Translation2d(0.5, 0)
+            new Translation2d(0.25, 0)
         ),
-        new Pose2d(1, 0, new Rotation2d(0)),
+        new Pose2d(0.5, 0, new Rotation2d(0)),
         // Pass config
         config
     );

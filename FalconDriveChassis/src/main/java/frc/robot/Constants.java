@@ -51,8 +51,11 @@ public final class Constants {
 
         public static final double kRamseteB = 2;
         public static final double kRamseteZeta = 0.7;
-
+        
+        public static final double kGearing = 7.56;
         public static final double kMetersPerRotation = 0.47878;
-        public static final double kSensorUnitsPerRotation = 4096;
+        public static final double kSensorUnitsPerRotation = 2048*kGearing;
+        //When testing a 1 m path, the robot goes a bit too short. Testing w/ a 2 m path is about right, with the robot consistently going 1.95 m. Testing a 3 m path causes the robot to go too far, going 3.86 m.
+        
     }
 }
