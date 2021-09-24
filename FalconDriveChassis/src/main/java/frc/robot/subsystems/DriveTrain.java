@@ -72,6 +72,7 @@ public class Drivetrain extends SubsystemBase {
     driveRightLeader.setSensorPhase(false);
 
     pigeon = new PigeonIMU(4);
+    resetEncoders();
 
     m_odometry = new DifferentialDriveOdometry(getRotation2d()); //testing setting stuff up with the pigeon
   }
@@ -81,7 +82,9 @@ public class Drivetrain extends SubsystemBase {
     // This method will be called once per scheduler run
     m_odometry.update(getRotation2d(), 
         (driveLeftLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation),
-        (-1 * driveRightLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation));
+        (driveRightLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation));
+        System.out.println("X: " + m_odometry.getPoseMeters().getTranslation().getX());
+        System.out.println("Y: " + m_odometry.getPoseMeters().getTranslation().getY());
     //m_drive.feedWatchdog(); //Turned safteyobject off so not needed, seems to have stopped some errors
 
   }
@@ -117,7 +120,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Raw Left Encoder", driveLeftLeader.getSelectedSensorPosition());
     SmartDashboard.putNumber("Raw Right Encoder", driveRightLeader.getSelectedSensorPosition());
     SmartDashboard.putNumber("Average Encoder Distance", getAverageEncoderDistance());
-    SmartDashboard.putNumber("Gyro Angle", pigeon.getHeading());
+    SmartDashboard.putNumber("Gyro Angle", getHeading());
     return new DifferentialDriveWheelSpeeds(10 * driveLeftLeader.getSelectedSensorVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 
                                             10 * driveRightLeader.getSelectedSensorVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation);
   }
@@ -166,7 +169,10 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetEncoders() {
-    driveLeftLeader.setSelectedSensorPosition(0);
+    if(driveLeftLeader.setSelectedSensorPosition(0)  != null){
+      System.out.println("Not resetting encoders");
+    };
+    System.out.println(driveLeftLeader.setSelectedSensorPosition(0));
     driveRightLeader.setSelectedSensorPosition(0);
   }
 
