@@ -83,8 +83,8 @@ public class Drivetrain extends SubsystemBase {
     m_odometry.update(getRotation2d(), 
         (driveLeftLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation),
         (driveRightLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation));
-        System.out.println("X: " + m_odometry.getPoseMeters().getTranslation().getX());
-        System.out.println("Y: " + m_odometry.getPoseMeters().getTranslation().getY());
+    //System.out.println("X: " + m_odometry.getPoseMeters().getTranslation().getX());
+    //System.out.println("Y: " + m_odometry.getPoseMeters().getTranslation().getY());
     //m_drive.feedWatchdog(); //Turned safteyobject off so not needed, seems to have stopped some errors
 
   }
