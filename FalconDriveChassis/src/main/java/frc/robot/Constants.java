@@ -37,12 +37,12 @@ public final class Constants {
         public static final int driveRightLeaderID = 14;   
 
         //example values pulled from tutorial, need to characterize Falcon Drive to find appropriate values
-        public static final double ksVolts = 0.584;
-        public static final double kvVoltSecondsPerMeter = 0.914;
-        public static final double kaVoltSecondsSquaredPerMeter = 0.0639;
-        public static final double kPDriveVel = 1.84;
+        public static final double ksVolts = 0.59;
+        public static final double kvVoltSecondsPerMeter = 1.71;
+        public static final double kaVoltSecondsSquaredPerMeter = 0.137;
+        public static final double kPDriveVel = 2.23;
 
-        public static final double kTrackwidthMeters = 1.247; //need to measure trackwidth, or characterize drive
+        public static final double kTrackwidthMeters = 0.626; //need to measure trackwidth, or characterize drive
         public static final DifferentialDriveKinematics kDriveKinematics =
             new DifferentialDriveKinematics(kTrackwidthMeters);
 
@@ -53,9 +53,8 @@ public final class Constants {
         public static final double kRamseteZeta = 0.7;
         
         public static final double kGearing = 7.56;
-        public static final double kMetersPerRotation = 0.47878;
+        public static final double kMetersPerRotation = 0.48878;
         public static final double kSensorUnitsPerRotation = 2048*kGearing;
-        //When testing a 1 m path, the robot goes a bit too short. Testing w/ a 2 m path is about right, with the robot consistently going 1.95 m. Testing a 3 m path causes the robot to go too far, going 3.86 m.
         
     }
 }
