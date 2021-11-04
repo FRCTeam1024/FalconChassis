@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.XboxController;
  * Add your docs here.
  */
 public class Logitech extends XboxController {
-    private final double deadband = 0.2;
+    private final double deadband = 0.1;
 
     public enum DPadState {
         NEUTRAl, UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT;
