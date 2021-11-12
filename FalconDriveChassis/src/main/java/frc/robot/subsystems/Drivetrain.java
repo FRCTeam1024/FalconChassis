@@ -8,7 +8,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.PigeonIMU;
-import com.kauailabs.navx.frc.AHRS;
+//import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
@@ -83,9 +83,11 @@ public class Drivetrain extends SubsystemBase {
     m_odometry.update(getRotation2d(), 
         (driveLeftLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation),
         (driveRightLeader.getSelectedSensorPosition() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation));
-    //System.out.println("X: " + m_odometry.getPoseMeters().getTranslation().getX());
-    //System.out.println("Y: " + m_odometry.getPoseMeters().getTranslation().getY());
-    //m_drive.feedWatchdog(); //Turned safteyobject off so not needed, seems to have stopped some errors
+      
+        SmartDashboard.putNumber("Raw Left Encoder", driveLeftLeader.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Raw Right Encoder", driveRightLeader.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Average Encoder Distance", getAverageEncoderDistance());
+        SmartDashboard.putNumber("Gyro Angle", getHeading());
 
   }
 
@@ -117,10 +119,7 @@ public class Drivetrain extends SubsystemBase {
    */
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    SmartDashboard.putNumber("Raw Left Encoder", driveLeftLeader.getSelectedSensorPosition());
-    SmartDashboard.putNumber("Raw Right Encoder", driveRightLeader.getSelectedSensorPosition());
-    SmartDashboard.putNumber("Average Encoder Distance", getAverageEncoderDistance());
-    SmartDashboard.putNumber("Gyro Angle", getHeading());
+
     return new DifferentialDriveWheelSpeeds(10 * driveLeftLeader.getSelectedSensorVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation, 
                                             10 * driveRightLeader.getSelectedSensorVelocity() * Constants.DriveConstants.kMetersPerRotation / Constants.DriveConstants.kSensorUnitsPerRotation);
   }
