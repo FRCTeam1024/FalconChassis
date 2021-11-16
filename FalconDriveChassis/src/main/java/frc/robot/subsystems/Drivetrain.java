@@ -73,6 +73,7 @@ public class Drivetrain extends SubsystemBase {
 
     pigeon = new PigeonIMU(4);
     resetEncoders();
+    zeroHeading();
 
     m_odometry = new DifferentialDriveOdometry(getRotation2d()); //testing setting stuff up with the pigeon
   }
@@ -87,7 +88,7 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Raw Left Encoder", driveLeftLeader.getSelectedSensorPosition());
         SmartDashboard.putNumber("Raw Right Encoder", driveRightLeader.getSelectedSensorPosition());
         SmartDashboard.putNumber("Average Encoder Distance", getAverageEncoderDistance());
-        SmartDashboard.putNumber("Gyro Angle", getHeading());
+        SmartDashboard.putNumber("Gyro Angle", getHeading()); 
 
   }
 
