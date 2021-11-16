@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
@@ -34,10 +35,11 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // Subsystem
+
+  // Subsystems
   private final Drivetrain drivetrain = new Drivetrain();
 
-  // Input
+  // Operator Inputs
   private final Logitech controller = new Logitech(Constants.Inputs.controllerID);
   private final Joystick leftJoystick = new Joystick(Constants.Inputs.leftJoystickID);
   private final Joystick rightJoystick = new Joystick(Constants.Inputs.rightJoystickID);
@@ -46,17 +48,25 @@ public class RobotContainer {
   private final DriveWithController driveWithController = new DriveWithController(drivetrain, controller);
   private final DriveWithJoysticks driveWithJoysticks = new DriveWithJoysticks(drivetrain, leftJoystick, rightJoystick);
 
-  private final Command m_autoCommand = new AutonomousCommand();
+  //Auto Commands
+  private final Command m_TrajectoryGenAuto = createTrajectoryCommand();
+  private final Command m_PathweaverAuto = createPathweaverCommand();
+
+  //Create a chooser for auto
+  SendableChooser<Command> m_AutoChooser = new SendableChooser<>();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Default Commands
+    // Configure the dashboard
+    configureDashboard();
+    
+    // Assign default Commands
     drivetrain.setDefaultCommand(driveWithController);
 
     // Configure the button bindings
     configureButtonBindings();
   }
-//Test without 
+
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -68,11 +78,33 @@ public class RobotContainer {
   }
 
   /**
+   * Use this method to configure the dashboard
+   * 
+   */
+  private void configureDashboard() {
+    //Add commands to auto chooser, set default to null to avoid surprise operation
+    m_AutoChooser.setDefaultOption("None", null);
+    m_AutoChooser.addOption("Trajectory Generator Auto", m_TrajectoryGenAuto); 
+    m_AutoChooser.addOption("Pathweaver Auto", m_PathweaverAuto);
+  }
+
+
+
+  /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    return m_AutoChooser.getSelected();
+  }
+
+  /**
+   * Create an auto command using the TrajectoryGenerator class
+   * 
+   * @return the auto command
+   */
+  private Command createTrajectoryCommand() {
     // An ExampleCommand will run in autonomous
     // Create a voltage constraint to ensure we don't accelerate too fast
     var autoVoltageConstraint =
@@ -106,6 +138,7 @@ public class RobotContainer {
         config
     );
 
+    // The actual command to follow the path
     RamseteCommand ramseteCommand = new RamseteCommand(
         exampleTrajectory,
         drivetrain::getPose,
@@ -122,10 +155,36 @@ public class RobotContainer {
         drivetrain
     );
 
-    // Reset odometry to the starting pose of the trajectory.
-    drivetrain.resetOdometry(exampleTrajectory.getInitialPose());
+    // Reset odometry to the starting pose of the trajectory, then Run path following command, then stop at the end.
+    return ramseteCommand.beforeStarting(() -> drivetrain.resetOdometry(exampleTrajectory.getInitialPose()))
+                          .andThen(() -> drivetrain.tankDriveVolts(0, 0));
+  }
 
-    // Run path following command, then stop at the end.
-    return ramseteCommand.andThen(() -> drivetrain.tankDriveVolts(0, 0));
+  /**
+   * Create an auto command using the path imported from Pathweaver
+   * 
+   * @return the auto command
+   */
+  private Command createPathweaverCommand() {
+
+    RamseteCommand ramseteCommand = new RamseteCommand(
+        Robot.testPath,
+        drivetrain::getPose,
+        new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
+        new SimpleMotorFeedforward(DriveConstants.ksVolts,
+                                   DriveConstants.kvVoltSecondsPerMeter,
+                                   DriveConstants.kaVoltSecondsSquaredPerMeter),
+        DriveConstants.kDriveKinematics,
+        drivetrain::getWheelSpeeds,
+        new PIDController(DriveConstants.kPDriveVel, 0, 0),
+        new PIDController(DriveConstants.kPDriveVel, 0, 0),
+        // RamseteCommand passes volts to the callback
+        drivetrain::tankDriveVolts,
+        drivetrain
+    );
+
+    // Reset odometry to the starting pose of the trajectory, then Run path following command, then stop at the end.
+    return ramseteCommand.beforeStarting(() -> drivetrain.resetOdometry(Robot.testPath.getInitialPose()))
+                          .andThen(() -> drivetrain.tankDriveVolts(0, 0));
   }
 }
