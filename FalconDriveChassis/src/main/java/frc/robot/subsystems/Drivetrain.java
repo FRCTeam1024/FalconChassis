@@ -8,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.PigeonIMU;
-//import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
@@ -45,9 +44,6 @@ public class Drivetrain extends SubsystemBase {
   /** Creates a new DriveTrain. */
   public Drivetrain() {
 
-    // Trying this to avoid errors
-    //m_drive.setSafetyEnabled(false);
-
     // Reset to default
     driveLeftFollower.configFactoryDefault();
     driveLeftLeader.configFactoryDefault();
@@ -75,7 +71,7 @@ public class Drivetrain extends SubsystemBase {
     resetEncoders();
     zeroHeading();
 
-    m_odometry = new DifferentialDriveOdometry(getRotation2d()); //testing setting stuff up with the pigeon
+    m_odometry = new DifferentialDriveOdometry(getRotation2d()); 
   }
 
   @Override
@@ -146,22 +142,16 @@ public class Drivetrain extends SubsystemBase {
   /**
    * Returns the heading of the robot.
    *
-   * @return the robot's heading in degrees, from -180 to 180
+   * @return the robot's heading in degrees
    */
   public double getHeading() {
     pigeon.getYawPitchRoll(yawPitchRoll);
-    return yawPitchRoll[0]; //-180 is an attempt to fix wraparound issues
+    return yawPitchRoll[0]; 
   }
 
   public void zeroHeading() {
-    //pigeon.setCompassAngle(180); //compassheading is being set to 180, but reading compass heading gives us 0 on smartdashboard
     pigeon.setYaw(0);
-    //pigeon.setFusedHeading(180);
   }
-
-  //public double getTurnRate() {
-  //  return -pigeon.;
-  //}
 
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
