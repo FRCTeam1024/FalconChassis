@@ -86,6 +86,9 @@ public class RobotContainer {
     m_AutoChooser.setDefaultOption("None", null);
     m_AutoChooser.addOption("Trajectory Generator Auto", m_TrajectoryGenAuto); 
     m_AutoChooser.addOption("Pathweaver Auto", m_PathweaverAuto);
+    //Put the auto chooser on the dashboard
+    SmartDashboard.putData(m_AutoChooser);
+  
   }
 
 

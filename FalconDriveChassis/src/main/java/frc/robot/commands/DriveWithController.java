@@ -36,7 +36,7 @@ public class DriveWithController extends CommandBase {
     //drivetrain.drive(leftFilter.calculate(-controller.getLeftStickY()), rightFilter.calculate(-controller.getRightStickY()));
     double x = -controller.getLeftStickY();
     double y = -controller.getRightStickY();
-    drivetrain.drive(x,y);
+    drivetrain.drive(x/3,y/3);
     SmartDashboard.putNumber("X Speed", x);
     SmartDashboard.putNumber("Y Speed", y);
   }

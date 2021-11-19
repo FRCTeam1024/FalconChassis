@@ -46,7 +46,7 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
 
     // Trying this to avoid errors
-    m_drive.setSafetyEnabled(false);
+    //m_drive.setSafetyEnabled(false);
 
     // Reset to default
     driveLeftFollower.configFactoryDefault();
@@ -108,8 +108,8 @@ public class Drivetrain extends SubsystemBase {
    * @param rightVolts the commanded right output
    */
   public void tankDriveVolts(double leftVolts, double rightVolts) {
-    m_leftMotors.setVoltage(leftVolts);
-    m_rightMotors.setVoltage(rightVolts);
+    driveLeftLeader.setVoltage(leftVolts);
+    driveRightLeader.setVoltage(rightVolts);
     m_drive.feed();
   }
 
@@ -169,10 +169,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetEncoders() {
-    if(driveLeftLeader.setSelectedSensorPosition(0)  != null){
-      System.out.println("Not resetting encoders");
-    };
-    System.out.println(driveLeftLeader.setSelectedSensorPosition(0));
+    driveLeftLeader.setSelectedSensorPosition(0);
     driveRightLeader.setSelectedSensorPosition(0);
   }
 
@@ -183,5 +180,6 @@ public class Drivetrain extends SubsystemBase {
   public void drive(double leftPower, double rightPower) {
     driveLeftLeader.set(ControlMode.PercentOutput, leftPower);
     driveRightLeader.set(ControlMode.PercentOutput, rightPower);
+    m_drive.feed();
   }
 }
