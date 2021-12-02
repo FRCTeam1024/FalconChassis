@@ -35,6 +35,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+
+    //Display and log the name and version of the code that is running
+    System.out.println("Running "+BuildConfig.APP_NAME+" "+BuildConfig.APP_VERSION);
+    
     // Load any path(s) needed for autonomous command from filesystem
     try {
         Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);

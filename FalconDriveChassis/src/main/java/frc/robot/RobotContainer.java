@@ -82,6 +82,9 @@ public class RobotContainer {
    * 
    */
   private void configureDashboard() {
+    //Display the name and version number of the code.
+    SmartDashboard.putString("Running Code Version:", BuildConfig.APP_NAME + " " + BuildConfig.APP_VERSION);
+    
     //Add commands to auto chooser, set default to null to avoid surprise operation
     m_AutoChooser.setDefaultOption("None", null);
     m_AutoChooser.addOption("Trajectory Generator Auto", m_TrajectoryGenAuto); 
