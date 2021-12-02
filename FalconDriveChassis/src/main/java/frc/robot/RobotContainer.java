@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
@@ -82,15 +84,28 @@ public class RobotContainer {
    * 
    */
   private void configureDashboard() {
+    //Create a ShuffleBoard Tab
+    ShuffleboardTab tab = Shuffleboard.getTab("1024Dashboard");
+
     //Display the name and version number of the code.
-    SmartDashboard.putString("Running Code Version:", BuildConfig.APP_NAME + " " + BuildConfig.APP_VERSION);
-    
+    tab.add("Running Code Version:", BuildConfig.APP_NAME + " " + BuildConfig.APP_VERSION)
+       .withSize(3,1)
+       .withPosition(0,0);
+
     //Add commands to auto chooser, set default to null to avoid surprise operation
     m_AutoChooser.setDefaultOption("None", null);
     m_AutoChooser.addOption("Trajectory Generator Auto", m_TrajectoryGenAuto); 
     m_AutoChooser.addOption("Pathweaver Auto", m_PathweaverAuto);
     //Put the auto chooser on the dashboard
-    SmartDashboard.putData(m_AutoChooser);
+    tab.add("Auto Mode",m_AutoChooser)
+       .withSize(2,1)
+       .withPosition(0,1);
+
+    //Add command status to dashboard
+    tab.add("DrivetrainCommand",drivetrain)
+       .withSize(2,1)
+       .withPosition(0,2);
+
   
   }
 
