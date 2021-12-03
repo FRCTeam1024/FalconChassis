@@ -149,6 +149,26 @@ public class Drivetrain extends SubsystemBase {
     return yawPitchRoll[0]; 
   }
 
+  /**
+   * Compares the read angle of the gyroscope to the angle of the last position on the PathWeaver path.
+   */
+  public void compareAngles(){
+    double readAngle = getHeading();
+    double lastAngle = 0.041642579098580663 * Constants.PI /180; //long double in this line is just pulled from the last angle of the PathWeaver .json file being used
+    if(readAngle <= lastAngle){
+      while(readAngle <= lastAngle){
+        m_leftMotors.set(-0.1);
+        m_rightMotors.set(0.1);
+      }
+    }else{
+      while(lastAngle <= readAngle){
+        m_leftMotors.set(0.1);
+        m_rightMotors.set(-0.1);
+      }
+    }
+  }
+  
+
   public void zeroHeading() {
     pigeon.setYaw(0);
   }

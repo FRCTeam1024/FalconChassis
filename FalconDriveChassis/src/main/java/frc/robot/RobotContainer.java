@@ -206,6 +206,6 @@ public class RobotContainer {
 
     // Reset odometry to the starting pose of the trajectory, then Run path following command, then stop at the end.
     return ramseteCommand.beforeStarting(() -> drivetrain.resetOdometry(Robot.testPath.getInitialPose()))
-                          .andThen(() -> drivetrain.tankDriveVolts(0, 0));
+                          .andThen(() -> drivetrain.tankDriveVolts(0, 0)).andThen(() -> drivetrain.compareAngles());
   }
 }
