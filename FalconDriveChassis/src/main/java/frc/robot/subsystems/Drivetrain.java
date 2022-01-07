@@ -151,6 +151,10 @@ public class Drivetrain extends SubsystemBase {
 
   /**
    * Compares the read angle of the gyroscope to the angle of the last position on the PathWeaver path.
+   * 
+   * DP:  Lets change this to be a turnToHeading command that we can pass a heading and it will turn the robot in place if
+   * it is not already there.  That way we don't need to set the lastAngle doube manually.
+   * 
    */
   public void compareAngles(){
     double readAngle = getHeading();

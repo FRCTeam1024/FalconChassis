@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 public final class Constants {
 
     public static final double PI = 3.14159;
+    public static final boolean CompBot = Robot.isCompBot();
 
     // IDs for physical input devices
     // Make sure order matches that of DriverStation

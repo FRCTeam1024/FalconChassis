@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.io.IOException;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -29,6 +30,9 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  private final DigitalInput compBotJumper = new DigitalInput(9);
+  private static boolean compBotState;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -38,6 +42,13 @@ public class Robot extends TimedRobot {
 
     //Display and log the name and version of the code that is running
     System.out.println("Running "+BuildConfig.APP_NAME+" "+BuildConfig.APP_VERSION);
+
+    // Check whether the current robot is the competition robot or the practice robot:
+    if(compBotJumper.get() == false) {
+      compBotState = false;
+    } else {
+      compBotState = true;
+    }
     
     // Load any path(s) needed for autonomous command from filesystem
     try {
@@ -116,4 +127,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
+  // Returns true if the current robot is the competition robot. Otherwise, false for practice bot.
+  public static boolean isCompBot() {
+    return compBotState;
+  }
 }
